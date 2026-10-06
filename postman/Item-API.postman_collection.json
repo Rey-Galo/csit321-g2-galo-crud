@@ -1,0 +1,172 @@
+{
+  "info": {
+    "name": "Item API",
+    "description": "Run requests in order. Create saves the generated itemid as itemId; update and delete use that ID. These requests write a test item to your database, then delete it. Start the app using run-local.ps1 first.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "itemId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Print author",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/item/api/printAuthor"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Create test item",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/item/api/postNewItem",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman test item\",\n  \"unit\": \"piece\",\n  \"price\": 12.5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "if (pm.response.code === 200) {",
+              "  const item = pm.response.json();",
+              "  pm.test(\"Generated item ID exists\", function () { pm.expect(item.itemid).to.be.a(\"number\").and.above(0); });",
+              "  pm.collectionVariables.set(\"itemId\", String(item.itemid));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. List all items",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/item/api/getAllItems"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Update test item",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/item/api/putItem?id={{itemId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman test item updated\",\n  \"unit\": \"piece\",\n  \"price\": 15\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Delete test item",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/item/api/deleteItem/{{itemId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Confirm deletion",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/item/api/getAllItems"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Test item was deleted\", function () {",
+              "  const id = Number(pm.collectionVariables.get(\"itemId\"));",
+              "  pm.expect(pm.response.json().some(item => item.itemid === id)).to.eql(false);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
