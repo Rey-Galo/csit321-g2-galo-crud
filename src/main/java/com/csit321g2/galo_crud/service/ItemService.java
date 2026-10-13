@@ -1,4 +1,4 @@
-package com.csit321g2.firstspringbootapp.service;
+package com.csit321g2.galo_crud.service;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.csit321g2.firstspringbootapp.entity.ItemEntity;
-import com.csit321g2.firstspringbootapp.repository.ItemRepository;
+import com.csit321g2.galo_crud.entity.ItemEntity;
+import com.csit321g2.galo_crud.repository.ItemRepository;
 
 @Service
 public class ItemService {

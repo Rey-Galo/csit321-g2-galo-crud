@@ -45,7 +45,7 @@ try {
     }
 
     Write-Host 'Starting the app at http://localhost:8080 (press Ctrl+C to stop).'
-    & java -cp $runtimeClasspath com.csit321g2.firstspringbootapp.DemoApplication
+    & java -cp $runtimeClasspath com.csit321g2.galo_crud.DemoApplication
     if ($LASTEXITCODE -ne 0) {
         throw "The app exited with code $LASTEXITCODE."
     }
